@@ -6,7 +6,7 @@ export default function VCard( { jsonCard } ) {
     const [qrSettings, setQrSettings] = useState({
         bgColor : '#000000',
         fgColor : '#ffffff',
-        level : 'Q',
+        level : 'L',
         size : 512,
         render : 'svg'
     });
@@ -82,6 +82,7 @@ export default function VCard( { jsonCard } ) {
         vcardString += `ORG:${organization}\n`
         vcardString += `TITLE:${title}\n`
         vcardString += `ROLE:${role}\n`
+        vcardString += `PHOTO;JPEG:${photo}\n`
         vcardString += `URL;TYPE;Website:${url}\n`
         vcardString += `URL;TYPE;Business Website:${workUrl}\n`
         vcardString += `URL;TYPE;Facebook:${facebook}\n`

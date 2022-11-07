@@ -112,9 +112,10 @@ section {
 
 section > div { width: auto; }
 
+/*
 .group + .group {
   margin-top: 3rem;
-}
+}*/
 
 footer {
   padding: 1rem 2rem;
@@ -151,7 +152,8 @@ pre {
 }
 
 .form {
-  max-width: 24rem;
+  max-width: 44rem;
+  width: 100%;
 }
 .group {
   display: flex;
@@ -198,4 +200,37 @@ main, header, footer {
   max-width: 64rem;
   padding-inline: 2rem;
   margin: 0 auto;
+}
+
+.tab {
+  display: none;
+}
+.tab.active {
+  display: flex;
+}
+.tab-body {
+  border: solid 2px var(--dark);
+  background-color: var(--dark);
+  padding: 1rem;
+}
+.tabs-wrapper { display: flex;}
+.tab-header {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.tab-item {
+  padding: 1rem;
+  transition: all 150ms ease;
+  cursor: pointer;
+}
+.tab-item.active {
+  background-color: var(--dark);
+}
+.tab-item:hover {
+  background-color: var(--yellow) !important;
+}
+
+.tab input {
+  border-color: #7c7c7c;
 }
