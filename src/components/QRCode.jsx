@@ -52,7 +52,7 @@ export default function QRCode( { qrString } ) {
                 <Input name="bgColor" label="Background" value={qrSettings.bgColor} handler={handleInputUpdate} classes="" type="color" />
                 <Input name="fgColor" label="Foreground" value={qrSettings.fgColor} handler={handleInputUpdate} classes="" type="color" />
             </div>
-            <div class="qr">
+            <div className="qr">
                 <QRCodeSVG value={qrString} size={qrSettings.size} bgColor={qrSettings.bgColor} fgColor={qrSettings.fgColor} level={qrSettings.level} />
             </div>
             <a href="/" className="download" onClick={handleDownload}>DOWNLOAD</a>

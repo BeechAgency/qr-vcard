@@ -1,4 +1,4 @@
-import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useState } from 'react';
 import Input from './Input';
 
@@ -54,7 +54,6 @@ export default function VCard( { jsonCard } ) {
         organization, 
         cellPhone, workPhone,
         photo,
-        timeZone, 
         url,
         workUrl,
         title,
@@ -68,8 +67,7 @@ export default function VCard( { jsonCard } ) {
         linkedIn,
         twitter,
         instagram,
-        tiktok,
-        custom
+        tiktok
     } = jsonCard;
 
     let vcardString = `BEGIN:VCARD\nVERSION:4.0\n`

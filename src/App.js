@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import FieldsVCard from './components/FieldsVCard';
-import Input from './components/Input';
 import TabsBody from './components/TabsBody';
 import VCard from './components/VCard';
 import QRCodeParser from './components/QRCodeParser';
+
+import qrTypes from './lib/qrTypes';
 
 function App() {
   const [cardData, setCardData] = useState(templateCard);
@@ -27,6 +28,8 @@ function App() {
 
     const update = {};
     update[name] = value;
+
+    console.log(e);
 
     if(activeType === 'vcard') {
       setCardData(current => {
@@ -56,14 +59,14 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Make a vCard</h1>
+        <h1>Make a QR Code</h1>
       </header>
       <main>
         <section>
 
           <div className="form">
             <div className="type-selector">
-              <h3>DETAILS</h3>
+              <h3>TYPE</h3>
               <select onChange={(e) => { setActiveType(e.target.value) }}>
                 {qrTypes.map( t => {
                   return <option key={t.name} value={t.name}>{t.label}</option>
@@ -81,16 +84,16 @@ function App() {
                 } )}
               </ul>
 
-              <FieldsVCard activeTab={activeTab} cardData={cardData} handleInputUpdate={handleInputUpdate} />
-              <TabsBody activeTab={activeTab} handler={handleInputUpdate} data={returnActiveTypeObject()} />
+              {activeType === 'vcard' ? 
+                <FieldsVCard activeTab={activeTab} cardData={cardData} handleInputUpdate={handleInputUpdate} /> :
+                <TabsBody activeTab={activeTab} handler={handleInputUpdate} data={returnActiveTypeObject()} /> }
             </div>
           </div>
 
           <div className="result">
-            <h3>Card</h3>
+            <h3>QR CODE</h3>
             
             <div className="group">
-              <h4>QR Code</h4>
               {activeType === 'vcard' ? <VCard jsonCard={cardData} /> : <QRCodeParser type={activeType} data={qrData} /> }
             </div>
 
@@ -143,64 +146,3 @@ const  templateCard = {
   custom: ''
 };
 
-
-/*
-  QR Types
-*/
-const qrTypes = [
-  { 
-    name : 'vcard' , 
-    label : 'VCard',
-    fields : []
-  },
-  { 
-    name : 'telephone' , 
-    label : 'Telephone',
-    fields : [{ name : 'phone', label: 'Phone Number', classes: ''}]
-  },
-  { 
-    name : 'calendar' , 
-    label : 'Calendar',
-    fields : [{ name : 'startDate', label: 'Start Date', classes: ''}, { name : 'startDate', label: 'Start Date', classes: ''}, { name : 'title', label: 'Event Title', classes: 'full'}]
-  },
-  { 
-    name : 'email' , 
-    label : 'Email',
-    fields : [{ name : 'emailTo', label: 'Email To', classes: 'full'},{ name : 'subject', label: 'Subject Line', classes: 'full'},{ name : 'message', label: 'Message', classes: 'full'}]
-  },
-  { 
-    name : 'sms' , 
-    label : 'SMS Message',
-    fields : [{ name : 'phoneNumber', label: 'Phone', classes: 'full'},{ name : 'message', label: 'Message', classes: 'full'}]
-  },
-  { 
-    name : 'wifi' , 
-    label : 'WiFi',
-    fields : [
-      { name : 'authentication', label: 'Authentication', classes: '', type : 'select', options: [{ name: 'WPA', label: 'WPA'},{ name: 'WEP', label: 'WEP'},{ name: 'nopass', label: 'No Password'}]},
-      { name : 'name', label: 'Wifi Name', classes: 'full'},
-      { name : 'password', label: 'Password', classes: 'full'},
-      { name : 'hidden', label: 'Hidden Network?', classes: '', type: 'checkbox'}
-    ]
-  },
-  { 
-    name : 'youtube' , 
-    label : 'Youtube',
-    fields : [{ name : 'videoId', label: 'Youtube Video Id', classes: 'full'}]
-  },
-  { 
-    name : 'instagram' , 
-    label : 'Instagram',
-    fields : [{ name : 'username', label: 'Username', classes: 'full'}]
-  },
-  { 
-    name : 'twitter' , 
-    label : 'Twitter',
-    fields : [{ name : 'username', label: 'Username', classes: 'full'}]
-  }, 
-  { 
-    name : 'twitterMessage' , 
-    label : 'Twitter Message',
-    fields : [{ name : 'content', label: 'Tweet Content', classes: 'full'}]
-  }
-];

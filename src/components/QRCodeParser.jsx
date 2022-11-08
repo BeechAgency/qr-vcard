@@ -30,7 +30,7 @@ export default function QRCodeParser( { type, data } ) {
             output =  `https://twitter.com/${data.username}`
             break;
         case 'twitterMessage':
-            output =  `https://twitter.com/intent/tweet?text=${data.content}`
+            output =  `https://twitter.com/intent/tweet?text=${data.text}&url=${data.url}&hashtags=${data.hashtags}&via=${data.via}&related=${data.related}`
             break;
         case 'location':
             output =   `http://maps.google.com/maps?q=${data.lat},${data.long}`
