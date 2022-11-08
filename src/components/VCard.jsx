@@ -108,7 +108,7 @@ export default function VCard( { jsonCard } ) {
                 </div>*/}
             </div>
 
-            <div class="qr">
+            <div className="qr">
                 <QRCodeSVG value={vcardString} size={qrSettings.size} bgColor={qrSettings.bgColor} fgColor={qrSettings.fgColor} level={qrSettings.level} />
             </div>
             

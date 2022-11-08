@@ -1,13 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
+import FieldsVCard from './components/FieldsVCard';
 import Input from './components/Input';
+import TabsBody from './components/TabsBody';
 import VCard from './components/VCard';
+import QRCodeParser from './components/QRCodeParser';
 
 function App() {
   const [cardData, setCardData] = useState(templateCard);
-  const [activeTab, setActiveTab] = useState('Personal');
+  const [qrData, setQrData] = useState({});
 
-  const tabs = ['Personal', 'Work', 'Address', 'Social'];
+  const [activeTab, setActiveTab] = useState('Personal');
+  const [tabs, setTabs] = useState(['Personal', 'Work', 'Address', 'Social']);
+  
+  const [activeType, setActiveType] = useState('vcard');
+
+  useEffect( () => {
+    activeType === 'vcard' ? setTabs(['Personal', 'Work', 'Address', 'Social']) : setTabs(['Info'])
+    activeType === 'vcard' ? setActiveTab('Personal') : setActiveTab('Info')
+
+  }, [activeType, setActiveTab]); 
 
   const handleInputUpdate = (e) => {
     const { name, value } = e.target;
@@ -16,14 +28,30 @@ function App() {
     const update = {};
     update[name] = value;
 
-    setCardData(current => {
-      // 👇️ using spread syntax (...)
-      return {
-        ...current,
-        ...update
-      };
-    });
+    if(activeType === 'vcard') {
+      setCardData(current => {
+        // 👇️ using spread syntax (...)
+        return {
+          ...current,
+          ...update
+        };
+      });
+    } else {
+      setQrData(current => {
+        // 👇️ using spread syntax (...)
+        return {
+          ...current,
+          ...update
+        };
+      });
+    }
   } 
+
+  const returnActiveTypeObject = () => {
+    const activeObj = qrTypes.find( e => e.name === activeType )
+
+    return activeObj
+  }
 
   return (
     <div className="App">
@@ -34,6 +62,14 @@ function App() {
         <section>
 
           <div className="form">
+            <div className="type-selector">
+              <h3>DETAILS</h3>
+              <select onChange={(e) => { setActiveType(e.target.value) }}>
+                {qrTypes.map( t => {
+                  return <option key={t.name} value={t.name}>{t.label}</option>
+                })}
+              </select>
+            </div>
 
             <h3>DETAILS</h3>
 
@@ -44,60 +80,21 @@ function App() {
                   return(<li key={tab} className={`tab-item ${activeTab === tab ? 'active' : ''}`} onClick={e=>{setActiveTab(tab)}}>{tab}</li>)
                 } )}
               </ul>
-              <div className="tab-body">
 
-                <div className={`personal group tab ${activeTab === 'Personal' ? 'active' : ''}`}>
-                  <h4>Personal</h4>
-                  <Input name="firstName" label="First Name" value={cardData.firstName} handler={handleInputUpdate} />
-                  <Input name="lastName" label="Last Name" value={cardData.lastName} handler={handleInputUpdate} />
-
-                  <Input name="cellPhone" label="Mobile" value={cardData.cellPhone} handler={handleInputUpdate} />
-                  <Input name="email" label="Email" value={cardData.email} handler={handleInputUpdate} />
-
-                  <Input name="url" label="Website" value={cardData.url} handler={handleInputUpdate} classes="full" />
-                  <Input name="photo" label="Image Url" value={cardData.imageUrl} handler={handleInputUpdate} classes="full" />
-                </div>
-
-                <div className={`work group tab ${activeTab === 'Work' ? 'active' : ''}`}>
-                  <h4>Work</h4>
-                  <Input name="organization" label="Organisation" value={cardData.organization} handler={handleInputUpdate} classes="full" />
-                  <Input name="title" label="Title" value={cardData.title} handler={handleInputUpdate} classes="" />
-                  <Input name="role" label="Role" value={cardData.role} handler={handleInputUpdate} classes="" />
-
-                  <Input name="workPhone" label="Work Phone" value={cardData.workPhone} handler={handleInputUpdate} />
-                  <Input name="workEmail" label="Work Email" value={cardData.workEmail} handler={handleInputUpdate} />
-                  <Input name="workUrl" label="Work URL" value={cardData.workUrl} handler={handleInputUpdate} classes="full" />
-                </div>
-
-                <div className={`address group tab ${activeTab === 'Address' ? 'active' : ''}`}>
-                  <h4>Address</h4>
-                  <Input name="street" label="Street" value={cardData.street} handler={handleInputUpdate} classes="full" />
-                  <Input name="city" label="Suburb" value={cardData.city} handler={handleInputUpdate} />
-                  <Input name="stateProvince" label="State" value={cardData.stateProvince} handler={handleInputUpdate} />
-                  <Input name="postalCode" label="Postcode" value={cardData.postalCode} handler={handleInputUpdate} />
-                  <Input name="country" label="Country" value={cardData.country} handler={handleInputUpdate} />
-                </div>
-
-                <div className={`social group tab ${activeTab === 'Social' ? 'active' : ''}`}>
-                  <h4>Social</h4>
-                  <Input name="facebook" label="Facebook" value={cardData.facebook} handler={handleInputUpdate} />
-                  <Input name="linkedIn" label="LinkedIn" value={cardData.linkedIn} handler={handleInputUpdate} />
-                  <Input name="twitter" label="Twitter" value={cardData.twitter} handler={handleInputUpdate} />
-                  <Input name="instagram" label="Instagram" value={cardData.instagram} handler={handleInputUpdate} />
-                  <Input name="tiktok" label="TikTok" value={cardData.tiktok} handler={handleInputUpdate} />
-                </div>
-              </div>
+              <FieldsVCard activeTab={activeTab} cardData={cardData} handleInputUpdate={handleInputUpdate} />
+              <TabsBody activeTab={activeTab} handler={handleInputUpdate} data={returnActiveTypeObject()} />
             </div>
           </div>
 
           <div className="result">
             <h3>Card</h3>
+            
             <div className="group">
               <h4>QR Code</h4>
-              <VCard jsonCard={cardData} />
+              {activeType === 'vcard' ? <VCard jsonCard={cardData} /> : <QRCodeParser type={activeType} data={qrData} /> }
             </div>
 
-            <pre htmlStyle="display: none;" className="hidden">
+            <pre htmlstyle="display: none;" className="hidden">
             {JSON.stringify(cardData,  null, 4)}
             </pre>
           </div>
@@ -145,3 +142,65 @@ const  templateCard = {
   tiktok: '',
   custom: ''
 };
+
+
+/*
+  QR Types
+*/
+const qrTypes = [
+  { 
+    name : 'vcard' , 
+    label : 'VCard',
+    fields : []
+  },
+  { 
+    name : 'telephone' , 
+    label : 'Telephone',
+    fields : [{ name : 'phone', label: 'Phone Number', classes: ''}]
+  },
+  { 
+    name : 'calendar' , 
+    label : 'Calendar',
+    fields : [{ name : 'startDate', label: 'Start Date', classes: ''}, { name : 'startDate', label: 'Start Date', classes: ''}, { name : 'title', label: 'Event Title', classes: 'full'}]
+  },
+  { 
+    name : 'email' , 
+    label : 'Email',
+    fields : [{ name : 'emailTo', label: 'Email To', classes: 'full'},{ name : 'subject', label: 'Subject Line', classes: 'full'},{ name : 'message', label: 'Message', classes: 'full'}]
+  },
+  { 
+    name : 'sms' , 
+    label : 'SMS Message',
+    fields : [{ name : 'phoneNumber', label: 'Phone', classes: 'full'},{ name : 'message', label: 'Message', classes: 'full'}]
+  },
+  { 
+    name : 'wifi' , 
+    label : 'WiFi',
+    fields : [
+      { name : 'authentication', label: 'Authentication', classes: '', type : 'select', options: [{ name: 'WPA', label: 'WPA'},{ name: 'WEP', label: 'WEP'},{ name: 'nopass', label: 'No Password'}]},
+      { name : 'name', label: 'Wifi Name', classes: 'full'},
+      { name : 'password', label: 'Password', classes: 'full'},
+      { name : 'hidden', label: 'Hidden Network?', classes: '', type: 'checkbox'}
+    ]
+  },
+  { 
+    name : 'youtube' , 
+    label : 'Youtube',
+    fields : [{ name : 'videoId', label: 'Youtube Video Id', classes: 'full'}]
+  },
+  { 
+    name : 'instagram' , 
+    label : 'Instagram',
+    fields : [{ name : 'username', label: 'Username', classes: 'full'}]
+  },
+  { 
+    name : 'twitter' , 
+    label : 'Twitter',
+    fields : [{ name : 'username', label: 'Username', classes: 'full'}]
+  }, 
+  { 
+    name : 'twitterMessage' , 
+    label : 'Twitter Message',
+    fields : [{ name : 'content', label: 'Tweet Content', classes: 'full'}]
+  }
+];
